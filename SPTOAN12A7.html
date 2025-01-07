@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sản phẩm toán học THPT Trần Khai Nguyên</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            color: #333;
+        }
+        .game-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        .game {
+            width: 320px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.1);
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #555;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Lucky Number Box Style */
+        #lucky-number-box {
+            margin-top: 20px;
+            width: 200px;
+            height: 200px;
+            background-color: #007bff;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 50px;
+            font-weight: bold;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.5s ease, transform 0.5s ease, background-color 0.3s ease;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #lucky-number-box.show {
+            opacity: 1;
+            transform: scale(1);
+            background-color: #28a745;
+        }
+
+        /* Slot Machine Game */
+        .slot-machine {
+            font-size: 50px;
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .slot {
+            width: 80px;
+            height: 80px;
+            margin: 0 10px;
+            border: 2px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Russian Roulette Styles */
+        img {
+            width: 300px;
+            height: auto;
+            margin-top: 20px;
+        }
+        .roulette-text {
+            margin: 1em auto;
+            padding: 0 1em;
+            max-width: 700px;
+        }
+        .roulette-game {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 320px;
+        }
+
+    </style>
+</head>
+<body>
+
+<h1>Sản phẩm toán học THPT Trần Khai Nguyên</h1>
+
+<!-- Game Container -->
+<div class="game-container">
+    <!-- Random Draw Game -->
+    <div class="game">
+        <h2>Bốc thăm may mắn</h2>
+        <button class="btn" onclick="drawLuckyNumber()">Bốc thăm</button>
+        <p style="font-size: 14px; color: #555; margin-top: 10px;">Chọn số từ 1 đến 100</p>
+        <div id="result" class="result"></div>
+        <div id="lucky-number-box"></div>
+    </div>
+
+    <!-- Slot Machine Game -->
+    <div class="game">
+        <h2>Máy Quay Gacha</h2>
+        <div class="slot-machine">
+            <div class="slot" id="slot1">🎰</div>
+            <div class="slot" id="slot2">🎰</div>
+            <div class="slot" id="slot3">🎰</div>
+        </div>
+        <button onclick="playSlotMachine()">Kéo Cần</button>
+        <div class="result" id="slot-machine-result"></div>
+    </div>
+
+    <!-- Russian Roulette Game -->
+    <div class="game roulette-game">
+        <h2>Cò quay Nga</h2>
+        <img src="https://i.imgur.com/d7ljJIs.png" alt="Gun Image">
+        <p id="gunText" class="roulette-text">Súng có 6 buồng và được nạp 1 viên đạn.</p>
+        <p id="chanceText" class="roulette-text">Súng có <u id="chance">0%</u> cơ hội nổ.</p>
+        <button onclick="pullTrigger()">Kéo Cò</button>
+        <button id="spinButton" onclick="spinBarrel()">Xoay Buồng</button>
+    </div>
+</div>
+
+<!-- Footer Credit -->
+<div class="credit">
+    Được làm bởi Trí Thuận, Thanh Vũ, Minh Trí, Quốc Thịnh 12A7
+</div>
+
+<script>
+    // Random Draw Game
+    function drawLuckyNumber() {
+        // Ẩn kết quả trước khi bốc thăm
+        const resultElement = document.getElementById('result');
+        resultElement.classList.remove('show');
+
+        // Ẩn ô số may mắn
+        const luckyNumberBox = document.getElementById('lucky-number-box');
+        luckyNumberBox.classList.remove('show');
+
+        // Hiển thị ô số may mắn
+        luckyNumberBox.style.opacity = 1;
+        luckyNumberBox.style.transform = 'scale(1)';
+
+        // Chạy qua các số ngẫu nhiên trước khi hiển thị số may mắn
+        let count = 0;
+        const randomInterval = setInterval(function() {
+            const randomNum = Math.floor(Math.random() * 100) + 1;
+            luckyNumberBox.innerText = randomNum; // Hiển thị số ngẫu nhiên trong ô
+
+            count++;
+            if (count >= 20) {  // Chạy qua 20 số ngẫu nhiên
+                clearInterval(randomInterval);
+
+                // Chờ một chút và hiển thị số may mắn cuối cùng
+                setTimeout(function() {
+                    const luckyNumber = Math.floor(Math.random() * 100) + 1; // Sinh số may mắn
+                    luckyNumberBox.innerText = luckyNumber;
+                    luckyNumberBox.classList.add('show'); // Hiển thị số may mắn
+                    resultElement.innerText = "Số may mắn của bạn là: " + luckyNumber;
+                    resultElement.classList.add('show');
+                }, 300); // Chờ 300ms trước khi hiển thị số may mắn
+            }
+        }, 100); // Mỗi 100ms cập nhật số ngẫu nhiên
+    }
+
+    // Slot Machine Game
+    function playSlotMachine() {
+        const symbols = ['🍒', '🍊', '⭐', '🔔', '🍇'];
+        const slot1 = document.getElementById('slot1');
+        const slot2 = document.getElementById('slot2');
+        const slot3 = document.getElementById('slot3');
+
+        let count = 0;
+        const interval = setInterval(() => {
+            slot1.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            slot2.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            slot3.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+
+            count++;
+            if (count > 15) {
+                clearInterval(interval);
+                const final1 = slot1.textContent;
+                const final2 = slot2.textContent;
+                const final3 = slot3.textContent;
+
+                if (final1 === final2 && final2 === final3) {
+                    document.getElementById('slot-machine-result').textContent = 'Jackpot! Bạn thắng! 🎉';
+                } else {
+                    document.getElementById('slot-machine-result').textContent = 'Bạn đã không trúng giải, hãy thử lại!';
+                }
+            }
+        }, 100);
+    }
+
+    // Russian Roulette Game
+    let bulletPos = 0;
+    let shots = 0;
+    let gunText = "Súng có 6 buồng và được nạp 1 viên đạn.";
+    let barrelSpinText = "Xoay Buồng";
+
+    function update() {
+        document.getElementById("gunText").innerHTML = gunText;
+        document.getElementById("chance").innerHTML = ((shots + 1) / 6 * 100).toFixed(2) + "%";
+    }
+
+    function pullTrigger() {
+        if (bulletPos <= 0) {
+            gunText = "<b>Súng đã nổ!</b>";
+            barrelSpinText = "Thử lại";
+        } else {
+            gunText = "Súng không nổ.";
+            bulletPos--;
+            shots++;
+        }
+        update();
+    }
+
+    function spinBarrel() {
+        bulletPos = Math.floor(Math.random() * 6);
+        shots = 0;
+        barrelSpinText = "Xoay Buồng";
+        gunText = "Buồng đã được xoay.";
+        update();
+    }
+
+    update();
+</script>
+
+</body>
+</html>
